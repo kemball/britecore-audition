@@ -1,0 +1,5 @@
+{"db_user": "SECRET",
+ "db_pass": "MORE_SECRET",
+ "db_host": "localhost",
+ "db_port": 3306,
+  "db_name": "my_db"}
