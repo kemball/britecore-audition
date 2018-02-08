@@ -1,6 +1,16 @@
 from flask import Flask,render_template,jsonify,g
+class sneakyFlask(Flask):
+  jinja_options = Flask.jinja_options.copy()
+  jinja_options.update(dict(
+      block_start_string='<%',
+      block_end_string='%>',
+      variable_start_string='%%',
+      variable_end_string='%%',
+      comment_start_string='<#',
+      comment_end_string='#>'))
 
-app=Flask(__name__)
+
+app=sneakyFlask(__name__)
 from orm import *
 
 
@@ -16,18 +26,6 @@ def one_type(risk_type=None):
   else:
     return ""
 
-@app.route("/test/<risk_type>")
-def test(risk_type=None):
-  thisrisk = risk_by_name(risk_type)
-  if thisrisk is not None:
-    print(risk_type," ",thisrisk.name)
-    thisrisk.name += " 1"
-    if thisrisk.save():
-      return "saved successfully"
-    else:
-      return "oh no something bad"
-  else:
-    return "risk not found"
 
 
 

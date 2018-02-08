@@ -56,22 +56,46 @@ class RiskType(Base):
     return jsonify((self.name,self.fields))
 
   def save(self):
-    print(self.name)
     with app.app_context():
       conn = get_db()
-      cur = conn.execute("""insert into risk_types
+      cur = conn.connection.cursor()
+
+      cur.execute("""insert into risk_types
                         (name)
                       values
                         (%s)""",(self.name,))
+      conn.connection.commit()
       new_id = cur.lastrowid
       insertable_fields = [(f[0],f[1],new_id) for f in self.fields]
-      conn.executemany("""
+      cur.executemany("""
                       insert into fields
                         (name,type,parent_risk)
                       values
                         (%s,(select field_types.id from field_types where name=%s),%s);
                       """,insertable_fields)
+      conn.connection.commit()
       return True
+
+  def delete(self):
+    if self.name is None:
+      return True
+    with app.app_context():
+      conn = get_db()
+      cur = conn.connection.cursor()
+      cur.execute("""select name,id from risk_types where name=%s;""",self.name)
+      info = cur.fetchone()
+      if info is None:
+        return True
+      else:
+        name,id_num = info
+      try:
+        conn.connection.begin()
+        cur.execute("""delete from fields where parent_risk=%s;""",[id_num])
+        cur.execute("""delete from risk_types where id=%s;""",[id_num])
+        conn.connection.commit()
+      except:
+        conn.connection.rollback()
+        raise
 
 
 field_types = Table('field_types',metadata,
@@ -92,23 +116,25 @@ def all_risk_names():
   return [x[0] for x in rv]
 
 def risk_by_name(name):
-  print("fetching name: ",name)
+  rv = get_db().execute('select name,id from risk_types where name=%s;',(name,))
+  row = rv.first()
+  if row is None:
+    return None
+  else:
+    name,id_num = row
+
   rv = get_db().execute("""
                     select
-                      risk_types.name,
                       fields.name,
                       field_types.name
                     from
                       fields
                       left join field_types on fields.type=field_types.id
-                      left join risk_types on fields.parent_risk=risk_types.id
                     where
-                      risk_types.name = %s;""",(name,))
-
-  if rv.rowcount==0:
-    return None
+                      fields.parent_risk = %s;""",(id_num,))
+  rv = rv.fetchall()
   named_risk = RiskType()
   named_risk.name = name
-  for (name,field_name,field_type) in rv.fetchall():
+  for (field_name,field_type) in rv:
     named_risk.fields.append((field_name,field_type))
   return named_risk
