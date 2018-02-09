@@ -36,7 +36,6 @@ def make_new():
 
 @app.route("/risks/<risk_type>",methods=['GET'])
 def one_type(risk_type=None):
-  print("fetching risk: ",risk_type)
   risk = risk_by_name(risk_type)
   if risk:
     return make_response(risk.json(),200)

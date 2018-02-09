@@ -53,7 +53,10 @@ class RiskType(Base):
     return '<Risk Type %s >' % self.name
 
   def json(self):
-    return jsonify((self.name,self.fields))
+    my_data = {"name":self.name,
+              "fields":[{"name":x[0],"type":x[1]} for x in self.fields]
+              }
+    return jsonify(my_data)
 
   def save(self):
     with app.app_context():
@@ -116,7 +119,6 @@ def all_risk_names():
   return [x[0] for x in rv]
 
 def risk_by_name(name):
-  print("risk named: ",name," accessed")
   rv = get_db().execute('select name,id from risk_types where name=%s;',(name,))
   row = rv.first()
   if row is None:

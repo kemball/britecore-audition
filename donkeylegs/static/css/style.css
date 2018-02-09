@@ -1,0 +1,22 @@
+body{
+	background-color:lightblue;
+}
+
+.r_f{
+	width=100%;
+	display:inline-block;
+}
+
+.stack_horizontal{
+	min-width:100px;
+	width: 25%;
+    display:inline-block;
+    margin-right: 10px;
+    box-sizing: border-box;
+    padding: 1%;
+}
+
+.label{
+	white-space:nowrap;
+	overflow:hidden;
+}

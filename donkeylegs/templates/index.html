@@ -7,22 +7,24 @@
   <link rel="stylesheet" type="text/css" href="%% url_for('static', filename='css/style.css') %%">
 
   <script src="https://unpkg.com/vue"></script>
-
+  <script src="%%url_for('static',filename='js/components.js')%%"></script>
 
     
 
     <h5>
       List of Risk Types
     </h5>
-    <div id="list_of_risks">
-      <ul >
-        <li v-for="risk in risks">
-          {{ risk.name }}
-        </li>
-      </ul>
+    <div  id="list_of_risks">
+        <div v-for="risk in risks" >
+          <risk-viewer :risk_name="risk.name"></risk-viewer>
+        </div>
     </div>
 
-
+  <script>
+    var url_risks = "%%url_for('list_of_types')%%";
+    console.log(url_risks);
+    var url_risk = "%%url_for('one_type',risk_type='')%%";
+  </script>
   <script src="%%url_for('static',filename='js/index.js')%%"></script>
 
   </body>
