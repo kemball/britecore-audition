@@ -4,33 +4,26 @@
 
   </head>
   <body>
+  <link rel="stylesheet" type="text/css" href="%% url_for('static', filename='css/style.css') %%">
+
   <script src="https://unpkg.com/vue"></script>
 
-  haha fooled you
 
-  there's no frontend here yet
+    
+
+    <h5>
+      List of Risk Types
+    </h5>
+    <div id="list_of_risks">
+      <ul >
+        <li v-for="risk in risks">
+          {{ risk.name }}
+        </li>
+      </ul>
+    </div>
 
 
-
-  <div id="app-4">
-    <ol>
-      <li v-for="todo in todos">
-        {{ todo.text }}
-      </li>
-    </ol>
-  </div>
-
-    <script> var app4 = new Vue({
-      el: '#app-4',
-      data: {
-        todos: [
-          { text: 'Learn JavaScript' },
-          { text: 'Learn Vue' },
-          { text: 'Build something awesome' }
-        ]
-      }
-    })
-    </script>
+  <script src="%%url_for('static',filename='js/index.js')%%"></script>
 
   </body>
 </html>

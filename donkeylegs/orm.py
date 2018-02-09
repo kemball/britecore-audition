@@ -116,6 +116,7 @@ def all_risk_names():
   return [x[0] for x in rv]
 
 def risk_by_name(name):
+  print("risk named: ",name," accessed")
   rv = get_db().execute('select name,id from risk_types where name=%s;',(name,))
   row = rv.first()
   if row is None:
@@ -132,9 +133,10 @@ def risk_by_name(name):
                       left join field_types on fields.type=field_types.id
                     where
                       fields.parent_risk = %s;""",(id_num,))
-  rv = rv.fetchall()
+  rows = rv.fetchall()
   named_risk = RiskType()
   named_risk.name = name
-  for (field_name,field_type) in rv:
+  named_risk.fields = []
+  for (field_name,field_type) in rows:
     named_risk.fields.append((field_name,field_type))
   return named_risk
